@@ -1,3 +1,2 @@
-# Online-Head-Tennis
-# Graphics - Pygame
-# Physics - Pymunk
+# Online Head Tennis
+Written in python, using Pygame for graphics and Pymunk for physics.
