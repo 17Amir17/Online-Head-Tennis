@@ -3,6 +3,7 @@ from pygame.locals import *
 
 userControls = {}
 addr = ('localHost', 9059)
+button = 'data/button.jpg'
 
 class Launcher():
 
@@ -126,9 +127,9 @@ class Menu():
     def __init__(self, client):
         self.client = client
         self.userControl = GUI.UserControl(hidden=True)
-        self.t = GUI.Textbox('button.jpg', (300, 200), (400, 60))
-        self.b1 = GUI.Button('button.jpg', (400, 320), (200, 60), text = 'Login', onClick=self.login)
-        self.b2 = GUI.Button('button.jpg', (400, 420), (200, 60), text = 'Connect', onClick=self.connect, hidden=True)
+        self.t = GUI.Textbox(button, (300, 200), (400, 60))
+        self.b1 = GUI.Button(button, (400, 320), (200, 60), text = 'Login', onClick=self.login)
+        self.b2 = GUI.Button(button, (400, 420), (200, 60), text = 'Connect', onClick=self.connect, hidden=True)
         self.s = GUI.Text('Enter Name:', (300, 160), 20, (0, 0, 0))
         self.s1 = GUI.Text('', (300, 270), 20, (255, 0, 0))
         self.s2 = GUI.Text('', (0, 550), 20, (255, 0, 0))
@@ -201,10 +202,10 @@ class RoomPicker():
         self.l2 = GUI.Text('Players', (400, 100), 20, (0, 0, 0))
         self.l3 = GUI.Text('Spectators', (600, 100), 20, (0, 0, 0))
         self.lp = GUI.Text('1', (610, 510), 30, (0, 0, 0))
-        self.refreshB = GUI.Button('button.jpg', (90, 500), (200, 60), text = 'Refresh', onClick=self.refresh)
-        self.newRoom = GUI.Button('button.jpg', (300, 500), (200, 60), text = 'Create Room', onClick=self.createNewRoom)
-        self.leftB = GUI.Button('button.jpg', (530, 500), (60, 60), text = '<-', onClick=self.left)
-        self.rightB = GUI.Button('button.jpg', (650, 500), (60, 60), text = '->', onClick=self.right)
+        self.refreshB = GUI.Button(button, (90, 500), (200, 60), text = 'Refresh', onClick=self.refresh)
+        self.newRoom = GUI.Button(button, (300, 500), (200, 60), text = 'Create Room', onClick=self.createNewRoom)
+        self.leftB = GUI.Button(button, (530, 500), (60, 60), text = '<-', onClick=self.left)
+        self.rightB = GUI.Button(button, (650, 500), (60, 60), text = '->', onClick=self.right)
 
         self.userControl.labels.append(self.title)
         self.userControl.labels.append(self.l1)
@@ -301,8 +302,8 @@ class Room():
         self.l1 = GUI.Text(name, (20, anchor), 20, (0, 0, 0))
         self.l2 = GUI.Text(str(players), (400, anchor), 20, (0, 0, 0))
         self.l3 = GUI.Text(str(spectators), (600, anchor), 20, (0, 0, 0))
-        self.b1 = GUI.Button('button.jpg', (700, anchor), (100, 30), text = 'Play', onClick=self.play)
-        self.b2 = GUI.Button('button.jpg', (810, anchor), (100, 30), text = 'Spectate', onClick=self.specate)
+        self.b1 = GUI.Button(button, (700, anchor), (100, 30), text = 'Play', onClick=self.play)
+        self.b2 = GUI.Button(button, (810, anchor), (100, 30), text = 'Spectate', onClick=self.specate)
 
         self.userControl.labels.append(self.l1)
         self.userControl.labels.append(self.l2)
@@ -336,9 +337,9 @@ class RoomCreator():
         self.title = GUI.Text('Create Room', (400, 50), 30, (0, 0, 0))
         self.l1 = GUI.Text('Room Name', (450, 170), 20, (0, 0, 0))
         self.l2 = GUI.Text('', (300, 260), 20, (255, 0, 0))
-        self.t = GUI.Textbox('button.jpg', (300, 200), (400, 60))
-        self.newRoom = GUI.Button('button.jpg', (400, 300), (200, 60), text = 'Create Room', onClick=self.createNewRoom)
-        self.backB = GUI.Button('button.jpg', (400, 400), (200, 60), text = 'Back', onClick=self.back)
+        self.t = GUI.Textbox(button, (300, 200), (400, 60))
+        self.newRoom = GUI.Button(button, (400, 300), (200, 60), text = 'Create Room', onClick=self.createNewRoom)
+        self.backB = GUI.Button(button, (400, 400), (200, 60), text = 'Back', onClick=self.back)
 
         self.userControl.labels.append(self.title)
         self.userControl.labels.append(self.l1)
