@@ -117,7 +117,7 @@ class UserClient():
 
     def startGame(self, addr):
         print 'Starting Game'
-        os.system('game.py ' + addr[0] + ' ' + str(addr[1]))
+        os.system('python game.py ' + addr[0] + ' ' + str(addr[1]))
 
     def getServerList(self):
         #TEMPORARY
