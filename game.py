@@ -324,6 +324,7 @@ class Player():
         """
         self.c = CollisionTypes()
         self.type = 'player'
+        self.name = ' '
         self.side = side
         self.position = position
         self.mass = mass
@@ -481,7 +482,7 @@ class Server():
         self.sec_per_ping = .2 # Second per each ping
         self.max_live = 1.0 # Maximum wait time with no ping
         self.ping_wait = .1 # Time to wait between each set of pings
-        self.playerHelper = PlayerHelper() # For getting free player slots
+        self.playerHelper = PlayerHelper() # For getting free player slots and setting player names
         t = threading.Thread(target=self.listen)
         t.setDaemon(True)
         t.start()
@@ -525,10 +526,11 @@ class Server():
             self.updateMenu()
         elif data[0] == '1': # Player Connection
             print 'Controller Connected'
+            name = data[1:]
             c = Client(addr, 'controller')
             self.clientList.append(c)
             self.playerList.append(c)
-            self.playerHelper.playerConnected(addr) # Tell playerHelper that a player connected
+            self.playerHelper.playerConnected(addr, name) # Tell playerHelper that a player connected
             self.s.sendto('hello', addr)
             self.updateMenu()
 
@@ -578,7 +580,7 @@ class Server():
             elif t.startswith('player'):
                 size = str(obj.size)
                 pos = str(obj.body.position.x) + ',' + str(obj.body.position.y)
-                data += t + '*' + size + '*' + pos + '#'
+                data += t + '*' + size + '*' + pos + '*' + obj.name + '#'
             elif t.startswith('racket'):
                 size = str(obj.size[0]) + ',' + str(obj.size[1])
                 pos = str(obj.body.position.x) + ',' + str(obj.body.position.y)
@@ -651,6 +653,8 @@ class Server():
             if obj.type.startswith('player'):
                 dic[obj.type] = obj
         self.playerObj = dic
+        self.playerHelper.playerObj[0] = dic['player1']
+        self.playerHelper.playerObj[1] = dic['player2']
 
     def updateMenu(self):
         self.menu.writePlayerList()
@@ -676,22 +680,35 @@ class PlayerHelper():
 
     def __init__(self):
         self.players = [[0, None], [0, None]]
+        self.playerObj = [None, None]
 
-    def playerConnected(self, addr):
-        if self.players[0][0] == 0:
+    def playerConnected(self, addr, name):
+        b = 0
+        if self.players[0][0] == 0: # Player1 Connecting
             self.players[0][0] = 1
             self.players[0][1] = addr
-        elif self.players[1][0] == 0:
+        elif self.players[1][0] == 0: # Player2 Connecting
             self.players[1][0] = 1
             self.players[1][1] = addr
+            b = 1
+        try:
+            self.playerObj[b].name = name
+        except:
+            print 'Fuck'
 
     def playerDisconnected(self, addr):
-        if str(self.players[0][1]) == str(addr):
+        b = 0
+        if str(self.players[0][1]) == str(addr): # player1 leave
             self.players[0][0] = 0
             self.players[0][1] = None
-        elif str(self.players[1][1]) == str(addr):
+        elif str(self.players[1][1]) == str(addr): # player2 leave
             self.players[1][0] = 0
             self.players[1][1] = None
+            b = 1
+        try:
+            self.playerObj[b].name = ' '
+        except:
+            print 'Fuck'
 
     def getSlots(self):
         slots = str(self.players[0][0]) + str(self.players[1][0])

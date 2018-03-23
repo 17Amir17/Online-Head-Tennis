@@ -177,4 +177,7 @@ class ServerRoom():
 
 
 if __name__ == '__main__':
+    f = open('ip.txt', 'r')
+    addr = (f.read().replace('\n', ''), 9059)
+    f.close()
     s = Server(addr)

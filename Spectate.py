@@ -8,7 +8,7 @@ addr = ('localHost', 9060)
 
 class Spectator():
 
-    def __init__(self, screen, _type=0, addr=('localHost', 9060), size = (1000, 600), title='Spectator', fps=60):
+    def __init__(self, screen, name="", _type=0, addr=('localHost', 9060), size = (1000, 600), title='Spectator', fps=60):
         pygame.init()
         self.type = _type # 0 for streamer other for streamer + controller
         if self.type != 0:
@@ -17,6 +17,7 @@ class Spectator():
         self.size = size
         self.fps = fps
         self.screen = screen#pygame.display.set_mode(size)
+        self.name = name
         self.clock = pygame.time.Clock()
         pygame.display.set_caption(title)
 
@@ -36,12 +37,14 @@ class Spectator():
         self.objects = [ball, player1, player2, racket1, racket2, self.scoreboard]
         self.allsprites = pygame.sprite.RenderPlain((player1, player2, ball))
         self.rackets = pygame.sprite.RenderPlain((racket1, racket2))
+        self.player1 = player1
+        self.player2 = player2
 
         self.listener = Listener(addr, size, self.objects)
         self.listener.start()
 
         if self.type != 0:
-            self.controller = Controller(self.type, addr=self.addr)
+            self.controller = Controller(self.type, self.name, addr=self.addr)
             self.controller.start()
 
         self.running = True
@@ -77,6 +80,8 @@ class Spectator():
 
             self.allsprites.draw(self.screen)
             self.rackets.draw(self.screen)
+
+            #UI
             self.render_score()
 
             #Finishup
@@ -105,19 +110,33 @@ class Spectator():
     def render_score(self):
         rounds = self.scoreboard.rounds
         score = self.scoreboard.score
+        name1 = self.player1.name
+        name2 = self.player2.name
+
         r = rounds[0] + ':' + rounds[1]
         s = score[0] + ':' + score[1]
+
         roundSurface = self.myfont.render(r, False, (0, 0, 0))
         scoreSurface = self.myfont.render(s, False, (0, 0, 0))
+        name1Surface = self.myfont.render(name1, False, (0, 0, 0))
+        name2Surface = self.myfont.render(name2, False, (0, 0, 0))
+
         rX, rY = roundSurface.get_size()
         sX, sY = scoreSurface.get_size()
         X, Y = self.size
+
         self.screen.blit(roundSurface,(X/2 - rX, rY))
         self.screen.blit(scoreSurface,(X/2 - sX, rY + sY))
+
+        nameHeight = 30
+        gap = 20
+        self.screen.blit(name1Surface, (gap, nameHeight))
+        self.screen.blit(name2Surface, (X - name2Surface.get_size()[0] - gap, nameHeight))
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 *****************************************************************************
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, scale):
         pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
@@ -170,6 +189,7 @@ class Player(pygame.sprite.Sprite):
             img = pygame.image.load('data/player.png')
         else:
             img = pygame.image.load('data/player2.png')
+        self.name = "player"
         self.side = side
         self.type = _type
         self.size = 50
@@ -381,6 +401,7 @@ class Listener():
                     #obj.pos = d[2]
                     obj.set_size(d[1])
                     obj.set_pos(d[2])
+                    obj.name = d[3]
                 elif d[0].startswith('racket'):
                     obj.set_size(d[1])
                     obj.set_pos(d[2])
@@ -404,7 +425,8 @@ class Listener():
             size = int(float(split[1]))
             x, y = split[2].split(',')
             pos = (int(float(x)), sizeY - int(float(y)))
-            return (t, size, pos)
+            name = split[3]
+            return (t, size, pos, name)
         elif t.startswith('racket'):
             x, y = split[1].split(',')
             size = (int(float(x)), int(float(y)))
@@ -432,8 +454,9 @@ class Listener():
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 class Controller():
 
-    def __init__(self, side, addr=('localHost', 9060), pps=60):
+    def __init__(self, side, name, addr=('localHost', 9060), pps=60):
         self.side = side
+        self.name = name
         self.addr = addr
         self.pps = pps # Packets per second
         self.left = self.right = self.jump = self.swing = 0
@@ -488,7 +511,7 @@ class Controller():
         while self.connected == False and self.run:
             try:
                 print 'Connecting...'
-                self.s.sendto('1', self.addr)
+                self.s.sendto('1' + self.name, self.addr)
                 time.sleep(.1)
                 data, addr = self.s.recvfrom(1024)
                 if data == 'hello':

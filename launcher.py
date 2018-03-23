@@ -7,7 +7,7 @@ button = 'data/button.jpg'
 
 class Launcher():
 
-    def __init__(self):
+    def __init__(self, addr):
         pygame.init()
         size = [1000, 600]
         self.screen = pygame.display.set_mode(size)
@@ -67,6 +67,7 @@ class Client():
     def __init__(self, addr):
         self.addr = addr
         self.s = socket.socket()
+        self.name = ''
 
     def connect(self):
         try:
@@ -176,6 +177,7 @@ class Menu():
         self.s1.setText('Loging in...')
         out = self.client.login(name)
         if out == 'OK':
+            self.client.name = name
             self.s1.setText('Logged In')
             self.s1.color = (0, 0, 255)
             self.hide()
@@ -314,10 +316,11 @@ class Room():
     def play(self):
         print 'Connecting to ' + str(self.addr)
         slots = self.client.requestFreeSlots(self.addr[1])
+        name = self.client.name
         if slots[0] == '0':
-            s = Spectate.Spectator(self.screen, _type = 'player1', addr=self.addr)
+            s = Spectate.Spectator(self.screen, name=name, _type = 'player1', addr=self.addr)
         elif slots[1] == '0':
-            s = Spectate.Spectator(self.screen, _type = 'player2', addr=self.addr)
+            s = Spectate.Spectator(self.screen, name=name, _type = 'player2', addr=self.addr)
 
 
     def specate(self):
@@ -380,4 +383,7 @@ class RoomCreator():
         userControls['roomPicker'].show()
 
 if __name__ == '__main__':
-    l = Launcher()
+    f = open('ip.txt', 'r')
+    addr = (f.read().replace('\n', ''), 9059)
+    f.close()
+    l = Launcher(addr)
