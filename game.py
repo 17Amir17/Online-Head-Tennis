@@ -494,7 +494,7 @@ class Server():
         """
         Messages from clients and handle them
         """
-        print 'Listening...'
+        print ('Listening...')
         while True:
             try:
                 rec = self.s.recvfrom(1024)
@@ -514,7 +514,7 @@ class Server():
         data, addr = rec
         # print str(addr) + ": " + data
         if data[0] == '0': # Request for stream
-            print 'Streamer connected'
+            print ('Streamer connected')
             c = Client(addr, 'streamer')
             self.clientList.append(c)
             self.streamerList.append(c)

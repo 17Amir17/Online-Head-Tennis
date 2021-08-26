@@ -71,7 +71,7 @@ class Client():
 
     def connect(self):
         try:
-            print 'Connecting'
+            print ('Connecting')
             self.s.connect(self.addr)
             self.s.send('0') # User client
             return 'Connected'
@@ -80,7 +80,7 @@ class Client():
 
     def login(self, name):
         try:
-            print 'Logging in'
+            print ('Logging in')
             self.s.send('0' + str(name))
             m = self.s.recv(1024)
             return m
@@ -89,7 +89,7 @@ class Client():
 
     def requestRoomList(self):
         try:
-            print 'Requesting room list'
+            print ('Requesting room list')
             self.s.send('1')
             m = self.s.recv(1024)
             return m
@@ -98,7 +98,7 @@ class Client():
 
     def requestCreateRoom(self, name):
         try:
-            print 'Requesting to create room'
+            print ('Requesting to create room')
             self.s.send('2' + name)
             m = self.s.recv(1024)
             return m
@@ -107,7 +107,7 @@ class Client():
 
     def requestPlayerCount(self, port):
         try:
-            print 'Requesting to player count'
+            print ('Requesting to player count')
             self.s.send('3' + str(port))
             m = self.s.recv(128)
             return m
@@ -116,7 +116,7 @@ class Client():
 
     def requestFreeSlots(self, port):
         try:
-            print 'Requesting free slots'
+            print ('Requesting free slots')
             self.s.send('4' + str(port))
             m = self.s.recv(128)
             return m
@@ -157,7 +157,7 @@ class Menu():
 
     def doConnect(self):
         out = self.client.connect()
-        print out
+        print (out)
         if out == 'Connected':
             self.s2.color = (0, 0, 255)
             self.b2.hidden = True
@@ -271,7 +271,7 @@ class RoomPicker():
         else:
             start = 0
             end = 0
-        print rooms
+        print (rooms)
         for i in range(start, end):
             r = rooms[i]
             rSplit = r.split('*')
@@ -314,7 +314,7 @@ class Room():
         self.userControl.buttons.append(self.b2)
 
     def play(self):
-        print 'Connecting to ' + str(self.addr)
+        print ('Connecting to ') + str(self.addr)
         slots = self.client.requestFreeSlots(self.addr[1])
         name = self.client.name
         if slots[0] == '0':
@@ -324,7 +324,7 @@ class Room():
 
 
     def specate(self):
-        print 'Connecting to ' + str(self.addr)
+        print ('Connecting to ') + str(self.addr)
         s = Spectate.Spectator(self.screen, _type = 0, addr=self.addr)
 
     def remove(self):
@@ -369,7 +369,7 @@ class RoomCreator():
         if out == 'OK':
             self.l2.setText('Room Created')
             self.l2.color = (0, 0, 255)
-            print 'Room Created!'
+            print ('Room Created!')
         elif out == '-1':
             self.l2.setText('Room name %s Already Taken' % name)
             self.l2.color = (255, 0, 0)
